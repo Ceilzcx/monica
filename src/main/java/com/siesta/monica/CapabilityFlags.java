@@ -1,6 +1,9 @@
 package com.siesta.monica;
 
+// https://dev.mysql.com/doc/internals/en/capability-flags.html
 public class CapabilityFlags {
+
+    private CapabilityFlags() {}
 
     public static final int CLIENT_LONG_PASSWORD = 0x00000001;
 
