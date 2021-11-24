@@ -1,5 +1,6 @@
 package com.siesta.monica.common;
 
+// https://dev.mysql.com/doc/internals/en/capability-flags.html
 public class CapabilityFlags {
 
     private CapabilityFlags() {}
