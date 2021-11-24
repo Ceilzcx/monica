@@ -3,6 +3,7 @@ package com.siesta.monica.protocol;
 import com.siesta.monica.io.ByteArrayOutputStream;
 import io.netty.channel.Channel;
 
+// send message to mysql
 public abstract class MySQLCommand {
     protected final ByteArrayOutputStream outputStream;
     private final Channel channel;

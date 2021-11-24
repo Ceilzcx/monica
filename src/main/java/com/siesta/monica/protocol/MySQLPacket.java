@@ -3,6 +3,7 @@ package com.siesta.monica.protocol;
 import com.siesta.monica.io.ByteArrayInputStream;
 import io.netty.buffer.ByteBuf;
 
+// read packet from mysql
 public abstract class MySQLPacket {
     private static final int HEADER_LENGTH = 4;
 
@@ -10,6 +11,7 @@ public abstract class MySQLPacket {
     private final int length;
     protected final ByteArrayInputStream inputStream;
 
+    // parse the header of packet (length: 3byte, sequenceNumber: 1byte, body: others)
     protected MySQLPacket(ByteBuf byteBuf) {
         byte[] header = new byte[HEADER_LENGTH];
         byteBuf.readBytes(header);
@@ -31,6 +33,7 @@ public abstract class MySQLPacket {
         return sequenceNumber;
     }
 
+    // parse the body
     public abstract void init();
 
     public abstract void logInfo();
