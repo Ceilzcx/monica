@@ -11,7 +11,7 @@ public class EncryptUtil {
         MessageDigest digest = MessageDigest.getInstance("SHA-1");
         byte[] pass1 = digest.digest(password);
         digest.reset();
-        byte[] pass2 = digest.digest(seed);
+        byte[] pass2 = digest.digest(pass1);
         digest.reset();
         digest.update(seed);
         byte[] pass3 = digest.digest(pass2);
