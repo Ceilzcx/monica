@@ -8,7 +8,6 @@ import com.siesta.monica.util.EncryptUtil;
 import io.netty.channel.Channel;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 
 public class AuthCommand extends MySQLCommand {
@@ -59,17 +58,19 @@ public class AuthCommand extends MySQLCommand {
     @Override
     public byte[] getData() {
         try {
-            outputStream.writeInt(CapabilityFlags.CLIENT_PROTOCOL_41);
-            outputStream.writeInt(MySQLConstants.MAX_PACKET_LENGTH);
+            outputStream.writeInt(CapabilityFlags.CLIENT_LONG_FLAG | CapabilityFlags.CLIENT_PROTOCOL_41 | CapabilityFlags.CLIENT_SECURE_CONNECTION | CapabilityFlags.CLIENT_CONNECT_WITH_DB);
+            outputStream.writeInt(0);
             outputStream.writeInt(handShakePacket.getCharacterSet(), 1);
 
-            outputStream.fillEndBytes(23);
+            outputStream.fillBytes(MySQLConstants.NULL_TERMINATED_STRING_DELIMITER, 23);
 
             outputStream.writeEndTerminatedString(username);
-            outputStream.writeBytes(encryptPwd());
+            byte[] encryptPassword = encryptPwd();
+            outputStream.writeInt(encryptPassword.length, 1);
+            outputStream.writeBytes(encryptPassword);
             outputStream.writeEndTerminatedString(schema);
 
-            outputStream.writeEndTerminatedString(handShakePacket.getAuthPluginName());
+//            outputStream.writeEndTerminatedString(handShakePacket.getAuthPluginName());
 
             return outputStream.toBytes();
         } catch (IOException | NoSuchAlgorithmException e) {
@@ -90,18 +91,8 @@ public class AuthCommand extends MySQLCommand {
     }
 
     private byte[] encryptPwd() throws NoSuchAlgorithmException {
-        byte[] scrambleBuff = new byte[handShakePacket.getAuthDataPart().length + handShakePacket.getAuthDataPart2().length];
-        System.arraycopy(handShakePacket.getAuthDataPart(),
-                0,
-                scrambleBuff,
-                0,
-                handShakePacket.getAuthDataPart().length);
-        System.arraycopy(handShakePacket.getAuthDataPart2(),
-                0,
-                scrambleBuff,
-                handShakePacket.getAuthDataPart().length,
-                handShakePacket.getAuthDataPart2().length);
-        return EncryptUtil.encode411(password.getBytes(StandardCharsets.UTF_8), scrambleBuff);
+        String scramble = handShakePacket.getAuthDataPart() + handShakePacket.getAuthDataPart2();
+        return EncryptUtil.passwordCompatibleWithMySQL411(password, scramble);
     }
 
 }

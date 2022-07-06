@@ -50,9 +50,9 @@ public class ByteArrayOutputStream {
         outputStream.write(MySQLConstants.NULL_TERMINATED_STRING_DELIMITER);
     }
 
-    public void fillEndBytes(int len) {
+    public void fillBytes(byte data, int len) {
         for (int i = 0; i < len; i++) {
-            outputStream.write(MySQLConstants.NULL_TERMINATED_STRING_DELIMITER);
+            outputStream.write(data);
         }
     }
 

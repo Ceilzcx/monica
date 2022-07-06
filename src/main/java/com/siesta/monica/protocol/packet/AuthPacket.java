@@ -29,6 +29,7 @@ public class AuthPacket extends MySQLPacket {
          *     EOF Packet       0xFE
          */
         this.status = inputStream.readInt(1);
+        log.info("auth response status: {}", this.status);
         if (status == SWITCH_STATUS) {
             pluginName = inputStream.readEndTerminatedString();
         } else if (status != MORE_STATUS) {

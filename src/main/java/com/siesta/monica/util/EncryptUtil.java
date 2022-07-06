@@ -21,4 +21,30 @@ public class EncryptUtil {
         return pass3;
     }
 
+    public static byte[] passwordCompatibleWithMySQL411(String password, String salt) {
+        MessageDigest sha;
+        try {
+            sha = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        byte[] passwordHash = sha.digest(password.getBytes());
+        return xor(passwordHash, sha.digest(union(salt.getBytes(), sha.digest(passwordHash))));
+    }
+
+    private static byte[] union(byte[] a, byte[] b) {
+        byte[] r = new byte[a.length + b.length];
+        System.arraycopy(a, 0, r, 0, a.length);
+        System.arraycopy(b, 0, r, a.length, b.length);
+        return r;
+    }
+
+    private static byte[] xor(byte[] a, byte[] b) {
+        byte[] r = new byte[a.length];
+        for (int i = 0; i < r.length; i++) {
+            r[i] = (byte) (a[i] ^ b[i]);
+        }
+        return r;
+    }
+
 }

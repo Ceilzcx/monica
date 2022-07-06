@@ -7,6 +7,8 @@ import com.siesta.monica.protocol.packet.AuthPacket;
 import com.siesta.monica.protocol.packet.HandShakePacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.*;
+
+import java.io.IOException;
 import java.net.SocketAddress;
 import java.security.NoSuchAlgorithmException;
 
@@ -39,7 +41,7 @@ public class MySQLConnector {
         this.status = status;
     }
 
-    public void readProtocol(ByteBuf msg) {
+    public void readProtocol(ByteBuf msg) throws IOException {
         this.packet = new HandShakePacket(msg);
         this.packet.logInfo();
 
@@ -60,11 +62,6 @@ public class MySQLConnector {
     public void sendAuthSwitchResponse(String authData) throws NoSuchAlgorithmException {
         AuthSwitchCommand response = new AuthSwitchCommand(channel, authData, password, packet.getSequenceNumber());
         channel.writeAndFlush(response.getAuthData());
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        MySQLConnector sqlConnector = MySQLConnectFactory.createMySQLConnector("localhost", 3306, "root", "zcx88372565", "test");
-        sqlConnector.connect();
     }
 
 }

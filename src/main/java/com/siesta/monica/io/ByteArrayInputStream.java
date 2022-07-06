@@ -71,11 +71,9 @@ public class ByteArrayInputStream {
     }
 
     public void skipData(int len) {
-        for (int i = 0; i < len; i++) {
-            if (inputStream.read() == -1) {
-                log.warn("inputStream has not enough data");
-                return;
-            }
+        long skip = inputStream.skip(len);
+        if (skip != len) {
+            log.warn("msg data is not enough: " + skip);
         }
     }
 
